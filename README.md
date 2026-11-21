@@ -1,75 +1,79 @@
-# React + TypeScript + Vite
+# HAUPCAR Car Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React app for company cars. This app talks only to the Node API. It does not talk to Supabase.
 
-Currently, two official plugins are available:
+Start the API in `haupcar-server` first. The client calls `http://localhost:3000/api`.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+- React, TypeScript, Vite
+- Ant Design, React Router
+- axios
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Setup
 
-## Expanding the ESLint configuration
+1. Use Node.js 20 or newer.
+2. Copy the env file:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+cp .env.example .env
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+3. `.env` has one value:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Name | What to put |
+| --- | --- |
+| `VITE_API_URL` | `http://localhost:3000/api` |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The `/api` part is required. The app requests `/cars`, so the full path is `http://localhost:3000/api/cars`.
 
+4. Install packages:
+
+```bash
+npm install
+```
+
+Do not commit `.env`.
+
+On the server, `CORS_ORIGIN` must be `http://localhost:5173`.
+
+## Run
+
+In `haupcar-server`:
+
+```bash
+npm run dev
+```
+
+In this folder:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173).
+
+| Path | Page |
+| --- | --- |
+| `/` | Car list. Delete asks you to confirm. |
+| `/cars/new` | Add a car. |
+| `/cars/:id/edit` | Edit a car. A missing id shows Car not found. |
+
+Other commands:
+
+```bash
+npm run build
+npm run preview
+npm run lint
+```
+
+`npm run preview` serves the files from `npm run build`.
+
+## Folder layout
+
+```
+src/api             axios calls
+src/types           car fields
+src/pages           list, add, and edit screens
+src/components      the shared car form
 ```
