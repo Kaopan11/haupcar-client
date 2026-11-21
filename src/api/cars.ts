@@ -1,6 +1,17 @@
 import axios from 'axios'
 import type { Car, CarInput } from '../types/car'
 
+export type CarFieldError = {
+  field: string
+  message: string
+}
+
+export type CarProblem = {
+  status: number
+  message: string
+  errors: CarFieldError[]
+}
+
 // Talk to the Node API only
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -38,4 +49,20 @@ export async function updateCar(id: number, input: CarInput): Promise<Car> {
 export async function deleteCar(id: number): Promise<void> {
   // Ask the API to remove that car
   await api.delete(`/cars/${id}`)
+}
+
+// Read the status and field errors from a failed car request
+export function readCarProblem(error: unknown): CarProblem {
+  // A non-axios failure has no status
+  if (!axios.isAxiosError(error)) {
+    return { status: 0, message: 'Something went wrong', errors: [] }
+  }
+  // Read the JSON body when the server sent one
+  const data = error.response?.data as { message?: string; errors?: CarFieldError[] } | undefined
+  // Return the status, the message, and any field errors
+  return {
+    status: error.response?.status ?? 0,
+    message: data?.message || 'Something went wrong',
+    errors: data?.errors ?? [],
+  }
 }
